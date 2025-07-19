@@ -361,4 +361,179 @@ You want to collect, analyze, and categorize a new AI use case from a website.
 }
 ```
 
-This workflow demonstrates how the different tools can be combined to create a comprehensive AI use case collection and analysis system. 
+This workflow demonstrates how the different tools can be combined to create a comprehensive AI use case collection and analysis system.
+
+## Example 11: Google Search for AI Content
+
+### Scenario
+You want to discover the latest AI use cases in the financial industry using Google search.
+
+### Tool Usage
+```json
+{
+  "name": "google-search",
+  "arguments": {
+    "query": "最新のAIユースケース 金融",
+    "limit": 5
+  }
+}
+```
+
+### Expected Response
+```
+「最新のAIユースケース 金融」を検索した結果 (5件/約245,000件):
+
+**1. AIが変える金融業界の未来 - 最新の活用事例**
+URL: https://example.com/ai-finance-future
+概要: 金融業界でのAI活用が急速に進んでいます。不正検知、リスク管理、顧客サービス向上など...
+
+**2. メガバンクのAI戦略 - 2024年の取り組み**
+URL: https://example.com/megabank-ai-strategy
+概要: 三大メガバンクがAI技術を活用した新サービスを相次いで発表。個人向け投資アドバイス...
+
+**3. FinTech企業のAI導入事例集**
+URL: https://example.com/fintech-ai-cases
+概要: 新興FinTech企業がAIを活用して従来の金融サービスを革新。審査の自動化や...
+
+💡 ヒント: これらのURLを scrape-url ツールに渡すことで、詳細な記事コンテンツを取得できます。
+```
+
+## Example 12: Site-Specific Google Search
+
+### Scenario
+You want to search for AI news specifically on a trusted news website.
+
+### Tool Usage
+```json
+{
+  "name": "google-search",
+  "arguments": {
+    "query": "人工知能 導入事例",
+    "limit": 3,
+    "site": "news.google.com"
+  }
+}
+```
+
+### Expected Response
+```
+「人工知能 導入事例」をnews.google.com内で検索した結果 (3件/約1,250件):
+
+**1. トヨタ、人工知能を活用した生産システムを導入**
+URL: https://news.google.com/toyota-ai-production
+概要: トヨタ自動車は人工知能技術を活用した新しい生産管理システムを導入すると発表...
+
+**2. 病院での人工知能診断システム導入事例**
+URL: https://news.google.com/hospital-ai-diagnosis
+概要: 都内の総合病院が画像診断にAIを導入し、診断精度の向上と医師の負担軽減を実現...
+
+**3. 小売業界のAI活用事例 - 在庫管理の革新**
+URL: https://news.google.com/retail-ai-inventory
+概要: 大手小売チェーンがAI技術を導入し、需要予測と在庫管理の最適化を実現...
+
+💡 ヒント: これらのURLを scrape-url ツールに渡すことで、詳細な記事コンテンツを取得できます。
+```
+
+## Example 13: Google Search + Scraping Integration
+
+### Scenario
+You want to discover and collect detailed information about AI healthcare applications.
+
+### Step-by-Step Process
+
+1. **Discover relevant content with Google Search:**
+```json
+{
+  "name": "google-search",
+  "arguments": {
+    "query": "AI healthcare applications 2024",
+    "limit": 3
+  }
+}
+```
+
+2. **Extract detailed content from found URLs:**
+```json
+{
+  "name": "scrape-url",
+  "arguments": {
+    "url": "https://example.com/ai-healthcare-2024",
+    "selectors": {
+      "title": "h1, .article-title",
+      "summary": ".summary, .abstract, .excerpt",
+      "content": ".article-content, .main-content",
+      "date": ".publish-date, .date",
+      "author": ".author, .byline"
+    },
+    "extractKeywords": true
+  }
+}
+```
+
+3. **Categorize the discovered use case:**
+```json
+{
+  "name": "categorize-use-case",
+  "arguments": {
+    "title": "AI-Powered Medical Imaging Analysis",
+    "summary": "Hospital implements deep learning system for radiology diagnosis",
+    "content": "The healthcare facility deployed convolutional neural networks for automated detection of abnormalities in medical scans..."
+  }
+}
+```
+
+### Workflow Benefits
+- **Discovery**: Google search finds relevant, up-to-date content
+- **Collection**: Web scraping extracts detailed information
+- **Organization**: Automatic categorization structures the data
+- **Analysis**: Keyword extraction identifies key technologies
+
+## Example 14: Automated Content Collection Workflow
+
+### Scenario
+You want to build a workflow that regularly discovers and collects AI use cases.
+
+### Complete Integration Example
+```json
+// Step 1: Search for latest AI content
+{
+  "name": "google-search",
+  "arguments": {
+    "query": "machine learning implementation case study 2024",
+    "limit": 5
+  }
+}
+
+// Step 2: For each URL in results, scrape content
+{
+  "name": "scrape-url", 
+  "arguments": {
+    "url": "{search_result_url}",
+    "extractKeywords": true
+  }
+}
+
+// Step 3: Categorize and analyze
+{
+  "name": "categorize-use-case",
+  "arguments": {
+    "title": "{scraped_title}",
+    "summary": "{scraped_summary}"
+  }
+}
+
+// Step 4: Search for similar cases
+{
+  "name": "search-use-cases",
+  "arguments": {
+    "query": "{extracted_keywords}",
+    "limit": 10
+  }
+}
+```
+
+### Expected Benefits
+- **Comprehensive Coverage**: Automatically discovers new content
+- **Structured Data**: Consistent categorization and keyword extraction
+- **Quality Control**: Validates findings against existing database
+- **Scalability**: Can handle large volumes of content efficiently 

@@ -113,6 +113,25 @@ Automatically categorize an AI use case based on its content.
 - `summary` (string): Use case summary
 - `content` (string, optional): Additional content
 
+#### 6. Google Search (`google-search`)
+Google検索を実行し、検索結果から関連する記事のURLやタイトル、概要を取得します。
+
+**Parameters:**
+- `query` (string): 検索したいキーワード
+- `limit` (number, default: 10): 取得する検索結果の最大数（1-10件）
+- `site` (string, optional): 特定のドメイン内のみを検索対象とする（例: "example.com"）
+
+**Example:**
+```json
+{
+  "query": "最新のAIユースケース 金融",
+  "limit": 5,
+  "site": "news.google.com"
+}
+```
+
+**Note:** Google Custom Search APIの使用にはAPIキーとCustom Search Engine ID (CX)が必要です。環境変数 `GOOGLE_SEARCH_API_KEY` と `GOOGLE_SEARCH_CX` を設定してください。
+
 ### Available Resources
 
 #### 1. AI Use Cases (`ai-use-cases://{category}/{limit}`)
@@ -250,6 +269,26 @@ npm run format
 ### Database
 The server uses SQLite for data storage. The database file (`ai_use_cases.db`) is created automatically in the project root.
 
+### Google Search API
+To use the `google-search` tool, you need to configure Google Custom Search API credentials:
+
+1. **Get API Key**: 
+   - Go to [Google Cloud Console](https://console.cloud.google.com/)
+   - Create a new project or select an existing one
+   - Enable the Custom Search API
+   - Create credentials (API key)
+
+2. **Set up Custom Search Engine**:
+   - Go to [Google Custom Search](https://cse.google.com/cse/)
+   - Create a new search engine
+   - Get the Search Engine ID (CX)
+
+3. **Configure Environment Variables**:
+   ```bash
+   export GOOGLE_SEARCH_API_KEY="your-api-key-here"
+   export GOOGLE_SEARCH_CX="your-custom-search-engine-id"
+   ```
+
 ### Scraping Settings
 - Default timeout: 10 seconds
 - Retry attempts: 3
@@ -264,6 +303,8 @@ The server uses SQLite for data storage. The database file (`ai_use_cases.db`) i
 - **puppeteer**: Headless browser for JavaScript-heavy pages
 - **sqlite3**: Database storage
 - **natural**: Natural language processing for keyword extraction
+- **googleapis**: Google APIs client library for Custom Search API
+- **google-auth-library**: Google authentication library
 - **zod**: Schema validation
 
 ## Security Considerations
