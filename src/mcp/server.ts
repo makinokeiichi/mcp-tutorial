@@ -6,17 +6,20 @@ import { randomUUID } from 'crypto';
 import { Database } from '../database/index.js';
 import { WebScraper } from '../scraping/index.js';
 import { KeywordExtractor } from '../analysis/keywordExtractor.js';
+import { GoogleSearchService } from '../search/index.js';
 
 export class AIUseCasesMCPServer {
   private server: McpServer;
   private database: Database;
   private scraper: WebScraper;
   private keywordExtractor: KeywordExtractor;
+  private googleSearch: GoogleSearchService;
 
   constructor() {
     this.database = new Database();
     this.scraper = new WebScraper();
     this.keywordExtractor = new KeywordExtractor();
+    this.googleSearch = new GoogleSearchService();
 
     this.server = new McpServer({
       name: 'ai-use-cases-server',
@@ -248,6 +251,80 @@ export class AIUseCasesMCPServer {
             content: [{
               type: 'text',
               text: `Error categorizing use case: ${error instanceof Error ? error.message : 'Unknown error'}`
+            }],
+            isError: true
+          };
+        }
+      }
+    );
+
+    // Google search tool
+    this.server.registerTool(
+      'google-search',
+      {
+        title: 'Google Search',
+        description: 'Google検索を実行し、検索結果から関連する記事のURLやタイトル、概要を取得する',
+        inputSchema: {
+          query: z.string().describe('検索したいキーワード'),
+          limit: z.number().min(1).max(10).default(10).describe('取得する検索結果の最大数（デフォルト: 10件）'),
+          site: z.string().optional().describe('特定のドメイン内のみを検索対象とする（例: example.com）')
+        }
+      },
+      async ({ query, limit, site }) => {
+        try {
+          // Check if Google Search is configured
+          if (!this.googleSearch.isConfigured()) {
+            const status = this.googleSearch.getConfigurationStatus();
+            return {
+              content: [{
+                type: 'text',
+                text: `Google Search が設定されていません。\n\n設定状況:\n- APIキー: ${status.hasApiKey ? '✓' : '✗'}\n- Custom Search Engine ID: ${status.hasCx ? '✓' : '✗'}\n\n環境変数 GOOGLE_SEARCH_API_KEY と GOOGLE_SEARCH_CX を設定してください。`
+              }],
+              isError: true
+            };
+          }
+
+          const searchResult = await this.googleSearch.search(query, { limit, site });
+
+          if (!searchResult.success) {
+            return {
+              content: [{
+                type: 'text',
+                text: `Google検索でエラーが発生しました: ${searchResult.error}`
+              }],
+              isError: true
+            };
+          }
+
+          if (searchResult.results.length === 0) {
+            return {
+              content: [{
+                type: 'text',
+                text: `検索クエリ「${query}」に対する結果が見つかりませんでした。`
+              }]
+            };
+          }
+
+          // Format results
+          const formattedResults = searchResult.results.map((item, index) => 
+            `**${index + 1}. ${item.title}**\nURL: ${item.url}\n概要: ${item.snippet}\n`
+          ).join('\n');
+
+          const summary = site 
+            ? `「${query}」を${site}内で検索した結果 (${searchResult.results.length}件/${searchResult.totalResults}件):`
+            : `「${query}」を検索した結果 (${searchResult.results.length}件/${searchResult.totalResults}件):`;
+
+          return {
+            content: [{
+              type: 'text',
+              text: `${summary}\n\n${formattedResults}\n\n💡 ヒント: これらのURLを scrape-url ツールに渡すことで、詳細な記事コンテンツを取得できます。`
+            }]
+          };
+        } catch (error) {
+          return {
+            content: [{
+              type: 'text',
+              text: `Google検索でエラーが発生しました: ${error instanceof Error ? error.message : 'Unknown error'}`
             }],
             isError: true
           };

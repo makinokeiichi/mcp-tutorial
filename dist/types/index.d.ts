@@ -300,4 +300,74 @@ export declare const AnalyzeTrendsSchema: z.ZodObject<{
     category?: string | undefined;
     industry?: string | undefined;
 }>;
+export declare const GoogleSearchSchema: z.ZodObject<{
+    query: z.ZodString;
+    limit: z.ZodDefault<z.ZodNumber>;
+    site: z.ZodOptional<z.ZodString>;
+}, "strip", z.ZodTypeAny, {
+    query: string;
+    limit: number;
+    site?: string | undefined;
+}, {
+    query: string;
+    limit?: number | undefined;
+    site?: string | undefined;
+}>;
+export declare const GoogleSearchItemSchema: z.ZodObject<{
+    title: z.ZodString;
+    url: z.ZodString;
+    snippet: z.ZodString;
+}, "strip", z.ZodTypeAny, {
+    title: string;
+    url: string;
+    snippet: string;
+}, {
+    title: string;
+    url: string;
+    snippet: string;
+}>;
+export declare const GoogleSearchResultSchema: z.ZodObject<{
+    query: z.ZodString;
+    results: z.ZodArray<z.ZodObject<{
+        title: z.ZodString;
+        url: z.ZodString;
+        snippet: z.ZodString;
+    }, "strip", z.ZodTypeAny, {
+        title: string;
+        url: string;
+        snippet: string;
+    }, {
+        title: string;
+        url: string;
+        snippet: string;
+    }>, "many">;
+    totalResults: z.ZodNumber;
+    success: z.ZodBoolean;
+    error: z.ZodOptional<z.ZodString>;
+    timestamp: z.ZodString;
+}, "strip", z.ZodTypeAny, {
+    results: {
+        title: string;
+        url: string;
+        snippet: string;
+    }[];
+    success: boolean;
+    timestamp: string;
+    query: string;
+    totalResults: number;
+    error?: string | undefined;
+}, {
+    results: {
+        title: string;
+        url: string;
+        snippet: string;
+    }[];
+    success: boolean;
+    timestamp: string;
+    query: string;
+    totalResults: number;
+    error?: string | undefined;
+}>;
+export type GoogleSearchItem = z.infer<typeof GoogleSearchItemSchema>;
+export type GoogleSearchResult = z.infer<typeof GoogleSearchResultSchema>;
 //# sourceMappingURL=index.d.ts.map

@@ -129,4 +129,29 @@ export const AnalyzeTrendsSchema = z.object({
   timeframe: z.string(),
   category: z.string().optional(),
   industry: z.string().optional()
-}); 
+});
+
+// Google Search Schemas
+export const GoogleSearchSchema = z.object({
+  query: z.string(),
+  limit: z.number().min(1).max(10).default(10),
+  site: z.string().optional()
+});
+
+export const GoogleSearchItemSchema = z.object({
+  title: z.string(),
+  url: z.string(),
+  snippet: z.string()
+});
+
+export const GoogleSearchResultSchema = z.object({
+  query: z.string(),
+  results: z.array(GoogleSearchItemSchema),
+  totalResults: z.number(),
+  success: z.boolean(),
+  error: z.string().optional(),
+  timestamp: z.string()
+});
+
+export type GoogleSearchItem = z.infer<typeof GoogleSearchItemSchema>;
+export type GoogleSearchResult = z.infer<typeof GoogleSearchResultSchema>; 

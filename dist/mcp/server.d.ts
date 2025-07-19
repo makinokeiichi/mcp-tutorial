@@ -3,6 +3,7 @@ export declare class AIUseCasesMCPServer {
     private database;
     private scraper;
     private keywordExtractor;
+    private googleSearch;
     constructor();
     private setupTools;
     private setupResources;
